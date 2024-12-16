@@ -1,63 +1,27 @@
-package users;
+package project_oop;
+import java.util.*;
 
-import java.io.Serializable;
-import java.util.List;
 
-import enums.UserRole;
-import main.Database;
-
-public abstract class User implements Serializable {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private Long id;
+abstract class User {
+    private int userId;
     private String login;
     private String password;
-    private String name;
-    private String surname;
-    private String phoneNumber;
-    private String email;
-    private UserRole role;
-    //private String role;
+    private String role;
+    private Language language;
+    private List<ResearchPaper> researchPapers = new ArrayList<>();
+    private List<ResearchProject> researchProjects = new ArrayList<>();
+    private Researcher Researcher;
 
-    
-    public User() {
-    }
-    
-    public User(String login, String password) {
-    	this.login = login;
-        this.password = password;
-        Database.getInstance().addUser(this);
-	}
-    
-    public User(String login, String password, String name) {
-    	this.login = login;
-        this.password = password;
-        this.name = name;
-        Database.getInstance().addUser(this);
-	}
-    
-    
-    public User (Long id, String login, String password, String name, String surname, String phoneNumber, String email) {
-        this.id = id;
+    public User(int id, String login, String password, String role, Language language) {
+        this.userId = id;
         this.login = login;
         this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-       // this.role = role;
-    }
-       
-    
-
-	public Long getId() {
-        return id;
+        this.role = role;
+        this.language = language;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public int getId() {
+        return userId;
     }
 
     public String getLogin() {
@@ -75,86 +39,101 @@ public abstract class User implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    //здесь с паролями надо подумать, паидеи они же хэшируются
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-   /* public String getRole() {
+    public String getRole() {
         return role;
     }
 
     public void setRole(String role) {
         this.role = role;
-    }*/
+    }
 
-    public boolean logIn(String login, String password, List<User> userList) {
-        for (User user : userList) {
-            if (login.equals(user.getLogin()) && password.equals(user.getPassword())) {
-                return true;
-            }
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+    	this.language = language;
+    }
+    
+
+    public List<ResearchPaper> getResearchPapers() {
+        return researchPapers;
+    }
+
+    public List<ResearchProject> getResearchProjects() {
+        return researchProjects;
+    }
+
+    public void addResearchPaper1(ResearchPaper paper) {
+        researchPapers.add(paper);
+    }
+
+    public void addResearchProject1(ResearchProject project) {
+        researchProjects.add(project);
+    }
+
+    public boolean changePassword(String oldPassword, String newPassword) {
+        if (this.password.equals(oldPassword)) {
+            this.password = newPassword;
+            return true;
         }
         return false;
     }
 
- /*   public void logOut() {
-    	костыли, надо будет спросить легально ли это
-        this.id = null;
-        this.login = null;
-        this.password = null;
-        this.name = null;
-        this.surname = null;
-        this.phoneNumber = null;
-        this.email = null;
-        //this.role = null;
-    }*/
-    
-    public boolean verify(String login, String password) {
-		return this.login.equals(login) && password.equals(password);
-    }
-    
-    public String toString() {
-		return getRole()+ ": " + "Login: " + login + ", password: " + password;
-	}
-    
-    public UserRole getRole() {
-        return this.role;
-    }
-    
- /*   public int compareTo(User u) {
-		if(id > u.id) {return 1;}
-		if(id < u.id) {return -1;}
-		return 0;
-	}*/
+    public abstract void displayInfo1();
 
+    public boolean isResearcher() {
+        // Если пользователь - профессор, он всегда исследователь
+        if (role.equals("Professor")) {
+            return true;
+        }
+
+        // Если это студент, проверим наличие хотя бы одного исследовательского проекта и статьи
+        if (role.equals("Student")) {
+            return !researchProjects.isEmpty() && !researchPapers.isEmpty();
+        }
+
+        // Работники (не преподаватели и не студенты) могут быть исследователями, если у них есть проекты и статьи
+        if (role.equals("Employee")) {
+            return !researchProjects.isEmpty() && !researchPapers.isEmpty();
+        }
+
+        // В случае других ролей (например, Tutor, SeniorLecturer) исследователями могут быть те, кто имеет проекты и статьи
+        return !researchProjects.isEmpty() && !researchPapers.isEmpty();
+    }
+
+    public boolean isEligibleForResearch() {
+        // Профессор и работник (не преподаватель) могут быть исследователями, если у них есть проекты и статьи
+        if (role.equals("Professor") || role.equals("Employee")) {
+            return true;
+        }
+
+        // Студенты могут быть исследователями только если у них есть проекты и статьи
+        return role.equals("Student") && !researchProjects.isEmpty() && !researchPapers.isEmpty();
+    }
+
+    public void addResearchPaper(ResearchPaper paper) {
+        researchPapers.add(paper);
+    }
+
+    public void addResearchProject(ResearchProject project) {
+        researchProjects.add(project);
+    }
+
+  
+    public void displayInfo() {
+		System.out.println("User ID: " + userId);
+        System.out.println("Login: " + login);
+        System.out.println("Role: " + role);
+        System.out.println("Language: " + language);
+    }
+
+
+    public void printPapers(Comparator<ResearchPaper> comparator) {
+        researchPapers.sort(comparator);
+        for (ResearchPaper paper : researchPapers) {
+            System.out.println(paper);
+        }
+    }
 }
