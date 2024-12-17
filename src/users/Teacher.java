@@ -1,136 +1,145 @@
 package users;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.time.DayOfWeek;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
+import attributes.*;
+import enums.*;
+import interfaces.SendableAndResearchable;
 
-import courses.Courses;
-import enums.AcademicDegree;
-import enums.Faculty;
-import enums.UserRole;
-import unisystem2023.Mark;
+/**
+ */
+public class Teacher extends Employee implements Cloneable, Serializable, SendableAndResearchable
+{
+	private static final long serialVersionUID = 4526927638042923352L;
 
-public class Teacher extends Employee implements CanBeResearcher, Serializable {
-    /**
-	 * 
+	private double rate;
+	private int rateCounter;
+    
+    private TypeTeacher type;
+    private Faculty faculty;
+
+    /** to distinct his lessons
 	 */
-	private static final long serialVersionUID = 1L;
-	static final UserRole role = UserRole.TEACHER;
-	private Faculty faculty;
-    private AcademicDegree academicDegree;
-    private Map<Courses, Vector<Student>> coursesAndStudents;
-
-    public Teacher() {
-        super();
-        coursesAndStudents = new HashMap<>();
-    }
+    private HashMap <Lesson, Vector <Student> > lessons;
     
+    private Schedule schedule;
     
-    public Teacher(String login, String password) {
-    	super(login, password);
+    {
+    	lessons = new HashMap <>();
+    	schedule = new Schedule();
     }
 
-    public Teacher(Long id, String login, String password, String name, String surname, String phoneNumber, String email, double salary,
-                   Faculty faculty, AcademicDegree academicDegree, Map<Courses, Vector<Student>> coursesMap) {
-        super(id, login, password, name, surname, phoneNumber, email, salary);
-        this.faculty = faculty;
-        this.academicDegree = academicDegree;
-        this.coursesAndStudents = coursesMap;
-    }
-    public String getName() {
-        return super.getName();
-    }
-
-    public Faculty getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(Faculty faculty) {
-        this.faculty = faculty;
-    }
-
-    public AcademicDegree getAcademicDegree() {
-        return academicDegree;
-    }
-
-    public void setAcademicDegree(AcademicDegree academicDegree) {
-        this.academicDegree = academicDegree;
-    }
-
-    public Map<Courses, Vector<Student>> getCoursesAndStudents() {
-        return coursesAndStudents;
-    }
-
-    public void setCoursesAndStudents(Map<Courses, Vector<Student>> coursesAndStudents) {
-        this.coursesAndStudents = coursesAndStudents;
-    }
-
-    public void viewCourses() {
-        for (Courses course : coursesAndStudents.keySet()) {
-            System.out.println("Course Name: " + course.getCoursesName());
-        }
-    }
-
-    public void manageCourse(Courses course) {
-        //в разработке
-    }
-
-    public void viewStudentInfo(Courses course) {
-        if (coursesAndStudents.containsKey(course)) {
-            Vector<Student> students = coursesAndStudents.get(course);
-            for (Student student : students) {
-                System.out.println("Student Name: " + student.getName() + ", Student ID: " + student.getId());
-            }
-        } else {
-            System.out.println("Course not found.");
-        }
-    }
     
-    public Researcher becomeResearcher(){
-		return new Researcher(this);
+    public Teacher(String password, String firstName, String lastName, TypeTeacher type, Faculty faculty) {
+    	super(password, firstName, lastName);
+    	this.type = type;
+    	this.faculty = faculty;
+    	if(this.type.equals(TypeTeacher.PROFESSOR)) super.setResearchStatus(true);
+    }
+
+
+	// Getters/Setters
+	public TypeTeacher getType() {
+		return type;
+	}
+	public void setType(TypeTeacher type) {
+		this.type = type;
+	}
+	public Faculty getFaculty() {
+		return faculty;
+	}
+	public void setFaculty(Faculty faculty) {
+		this.faculty = faculty;
+	}
+	public double getRate() {
+		return rate;
+	}
+	public void setRate(double rate) {
+		this.rate = rate;
+	}
+	public HashMap <Lesson, Vector <Student> > getLessons() {
+		return lessons;
+	}
+	public void setCourses(HashMap <Lesson, Vector <Student>> lessons) {
+		this.lessons = lessons;
+	}	
+	public int getRateCounter() {
+		return rateCounter;
+	}
+	public void setRateCounter(int rateCounter) {
+		this.rateCounter = rateCounter;
+	}
+	public Schedule gettSchedule() {
+		return this.schedule;
 	}
 
-    public void putMarks(Courses course, Student student, double att1, double att2, double finalExam) {
-        // Проверяем, преподает ли учитель этот курс
-        if (coursesAndStudents.containsKey(course)) {
-            Vector<Student> students = coursesAndStudents.get(course);
-            
-            // Проверяем, записан ли студент на курс
-            if (students.contains(student)) {
-                // Проверяем, существует ли карта оценок студента для этого курса
-                if (!student.getCoursesAndMarks().containsKey(course)) {
-                    // Создаем объект Mark и устанавливаем оценки для студента на этом курсе
-                    Mark studentMark = new Mark();
-                    studentMark.setAtt1(att1);
-                    studentMark.setAtt2(att2);
-                    studentMark.setFinalExam(finalExam);
-                    
-                    student.getCoursesAndMarks().put(course, studentMark);
-                    System.out.println("Marks added for student " + student.getName() + " on course " + course.getCoursesName());
-                } else {
-                    // Обновляем оценки для студента на этом курсе
-                    Mark studentMark = student.getCoursesAndMarks().get(course);
-                    studentMark.setAtt1(att1);
-                    studentMark.setAtt2(att2);
-                    studentMark.setFinalExam(finalExam);
-                    
-                    System.out.println("Marks updated for student " + student.getName() + " on course " + course.getCoursesName());
-                }
-            } else {
-                System.out.println("Student not enrolled in the course.");
-            }
-        } else {
-            System.out.println("Course not found.");
-        }
-    }
 
+	// Teacher methods
+	public boolean putMark(Student s, Mark m, Lesson lesson) throws IOException {
+	    Vector <Mark> marks = s.getJournal().getMarks().computeIfAbsent(lesson.getCourse(), k -> new Vector<>());
+	    Double total = marks.stream().map(n->n.getMark()).mapToDouble(i -> i).sum();
+	    if(total + m.getMark() > 30) {
+	      return false;
+	    }
+	    marks.add(m);
+	    DataBase.serializeUsers();
+	    return true;
+	 }
+	
+	public boolean drawUpSchedule(Lesson lesson, DayOfWeek day, int begin) throws IOException {
+		lesson.setDay(day);
+		if(!(begin > 7 && begin < 23)) return false;
+		lesson.setBegin(begin);
+		DataBase.serializeUsers();
+		DataBase.serializeCourses();
+		return true;
+	}
+	
+	public void sendRequest(Request request) throws IOException {
+		DataBase.requests.add(request); DataBase.serializeRequests();
+	}
 
-    public void sendComplaint(Student student, String complaint) {
-        // в разработке
-    }
-    
-    public UserRole getRole() {
-        return role;
-    }
+	public void doResearch(Research research) throws IOException {
+		super.doResearch(research);
+	}
+
+	
+	// Standard methods
+	public boolean equals(Object o) {
+		return super.equals(o);
+	}
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	public int compareTo(User u) {
+	     return super.compareTo(u);
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+	
+	public int StudentsAmount() {
+		for(Lesson l: lessons.keySet()) {
+			 return lessons.get(l).size();
+		}
+		return 0;
+	}
+
+	public String forProfile() {
+		 return super.forProfile() + "\n-\n" +
+				"Teacher type: " + this.type + "\nFaculty: " + this.faculty + "\n-\n" +
+				"Teacher rate: " + (this.rate / this.rateCounter) +  "\n-\n" +
+				"Students amount: " + this.StudentsAmount();
+	}
+	public String toString() {
+		return super.toString() + "\n-\n" +
+			   "Teacher type: " + this.type + "\nFaculty: " + this.faculty + "\n-\n" +
+			   "Teacher rate: " + (this.rate / this.rateCounter);
+	}
 }
+

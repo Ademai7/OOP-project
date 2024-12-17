@@ -1,221 +1,203 @@
 package users;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import courses.Courses;
-import enums.Faculty;
-import enums.OrganizationName;
-import enums.UserRole;
-import main.Database;
-import unisystem2023.Mark;
+import attributes.*;
+import enums.*;
+import interfaces.SendableAndResearchable;
 
+/**
+ */
+public class Student extends User implements Serializable, SendableAndResearchable
+{
+	private static final long serialVersionUID = 5966106202813773446L;
 
-public class Student extends User implements CanBeResearcher, Serializable, Comparable<User> {
-	
-	private static final long serialVersionUID = 1L;
-	static final UserRole role = UserRole.STUDENT;
-	private Faculty faculty;
-    private int yearOfStudy;
+	private int year;
+	private double hIndex;
+    private boolean researchStatus;
     private double GPA;
-    private OrganizationName member;
-    private HashMap<Courses,Mark> courses = new HashMap<Courses,Mark>();
-    private HashMap<Courses, Mark> coursesAndMarks = new HashMap<Courses,Mark>();
-
-    public Student() {
-        super();
-        courses = new HashMap<>();
-    }
     
-    public Student(String login, String password) {
-    	super(login, password);
-    }
-
-    public Student(Long id, String login, String password, String name, String surname,
-                   String phoneNumber, String email, Faculty faculty, int yearOfStudy,
-                   double GPA, OrganizationName member, HashMap<Courses,Mark> courses) {
-        super(id, login, password, name, surname, phoneNumber, email); 
-        this.faculty = faculty;
-        this.yearOfStudy = yearOfStudy;
-        this.GPA = GPA;
-        this.member = member;
-        this.courses = courses;
-    }
+    private Degree degree;
+    private Faculty faculty;
     
-    public HashMap<Courses, Mark> getCurrentMarks(){
-    	return coursesAndMarks;
-    }
-
-    // Геттеры и сеттеры 
-
-    public Faculty getFaculty() {
-        return this.faculty;
-    }
-
-    public void setFaculty(Faculty faculty) {
-        this.faculty = faculty;
-    }
-
-    public int getYearOfStudy() {
-        return this.yearOfStudy;
-    }
-
-    public void setYearOfStudy(int yearOfStudy) {
-        this.yearOfStudy = yearOfStudy;
-    }
-
-    public double getGPA() {
-        return this.GPA;
-    }
-
-    public void setGPA(double GPA) {
-        this.GPA = GPA;
-    }
-
-    public OrganizationName getMember() {
-        return this.member;
-    }
-
-    public void setMember(OrganizationName member) {
-        this.member = member;
-    }
-
-    public HashMap<Courses,Mark> getCourses() {
-        return this.courses;
-    }
-
-    public void setCourses(HashMap<Courses,Mark> courses) {
-        this.courses = courses;
-    }
+    private Vector <Course> courses;
+    private Vector <Teacher> ratedTeachers;
     
-    public HashMap<Courses, Mark> getCoursesAndMarks() {
-        return coursesAndMarks;
+    private Schedule schedule;
+	
+    
+    /** transcript where marks are located 
+	 */
+    private Transcript transcript;
+    
+    
+    private Journal journal;
+    
+    {
+    	hIndex = 0;
+		researchStatus = false;
+    	courses = new Vector <Course>();
+    	journal = new Journal();
+    	transcript = new Transcript();
+    	setRatedTeachers(new Vector<>());
+    	schedule = new Schedule();
+    	
     }
     
 
-
-    public void viewAllMarks() {
-        Map<Courses, Mark> coursesAndMarks = getCoursesAndMarks();
-
-        if (coursesAndMarks.isEmpty()) {
-            for (Map.Entry<Courses, Mark> entry : coursesAndMarks.entrySet()) {
-                Courses course = entry.getKey();
-                Mark mark = entry.getValue();
-                System.out.println("Course: " + course.getCoursesName() + ", Mark: " + mark.getAtt1()+mark.getAtt2()+mark.getFinalExam());
-            }
-        } else {
-            System.out.println("No marks available");
-        }
-    }
-
-
-    public void viewCourses() {
-        for (Map.Entry<Courses, Mark> entry : courses.entrySet()) {
-            Courses course = entry.getKey();
-            System.out.println(course);
-        }
-    }
-
-
-   /* public boolean addCourse(Courses c){
-        // Check prerequisites, credits, faculty
-        // Add the course with a default mark
-        courses.put(c, new Mark());
-        return true;
-    }*/
-    
-    public boolean register(Courses course) {
-        // Check if the student is eligible to register for the course based on prerequisites, credits, etc.
-        // You need to implement the logic based on your application's requirements
-
-        // For demonstration purposes, let's assume the student can register for any course without restrictions
-        if (course != null) {
-            // Check if the course is not already registered
-            if (!courses.containsKey(course)) {
-                // Add the course with a default mark
-                courses.put(course, new Mark());
-                return true; // Successfully registered
-            } else {
-                // Student is already registered for this course
-                System.out.println("Already registered for this course: " + course.getCoursesName());
-                return false; // Failed to register
-            }
-        } else {
-            // Invalid course
-            System.out.println("Invalid course");
-            return false; // Failed to register
-        }
-    }
-
-    
-    public void dropCourse(Courses course) {
-        Database database = Database.getInstance();
-        if (database.getCourses().contains(course)) {
-            database.deleteCourse(course);
-            courses.remove(course);
-            /*System.out.println("Course '" + course.getCoursesName() + "' removed successfully.");
-        } else {
-            System.out.println("Course '" + course.getCoursesName() + "' not found in the database.");
-        }*/
-    }
-}
-
-
-    public void viewTeachers() {
-        if (courses != null && !courses.isEmpty()) {
-            for (Map.Entry<Courses, Mark> entry : courses.entrySet()) {
-                Courses course = entry.getKey();
-                Teacher lector = course.getLector();
-                if (lector != null) {
-                    System.out.println("Course: " + course.getCoursesName() + ", Lector: " + lector.getName());
-                } else {
-                    System.out.println("Course: " + course.getCoursesName() + ", Teacher: Not assigned");
-                }
-            }
-        } else {
-            System.out.println("No lessons available.");
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        // TODO: Implement proper equals method comparing Student objects
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Student student = (Student) obj;
-        // Add comparison logic based on the fields of Student class
-        return this.faculty.equals(student.faculty)
-                && this.yearOfStudy == student.yearOfStudy
-                && Double.compare(this.GPA, student.GPA) == 0
-                && this.member.equals(student.member)
-                && this.courses.equals(student.courses);
-    }
-
-    
-    public Researcher becomeResearcher(){
-		return new Researcher(this);
+    public Student(String password, String firstName, String lastName, int year, double GPA, Degree degree, Faculty faculty) {
+		super(password, firstName, lastName);
+		this.year = year;
+		this.GPA = GPA;
+		this.degree = degree;
+		if(this.degree.equals(Degree.PHD)) researchStatus = true;
+		this.faculty = faculty;
 	}
-    
-    
-    public UserRole getRole() {
-        return role;
-    }
-    
-
-    @Override
-   public int compareTo(User o) {
-        if (o instanceof Student) {
-            Student otherStudent = (Student) o;
-            return Long.compare(this.getId(), otherStudent.getId());
-        }
-        return 0;
-    }
 
     
+    // Getters/Setters
+	public int getYear() {
+		return year;
+	}
+	public void setYear(int year) {
+		this.year = year;
+	}	
+	public double gethIndex() {
+		return hIndex;
+	}
+	public void sethIndex(double d) {
+		this.hIndex = d; 
+	}
+	public boolean isResearchStatus() {
+		return researchStatus;
+	}
+	public void setResearchStatus(boolean researchStatus) {
+		this.researchStatus = researchStatus;
+	}
+	public double getGPA() {
+		return GPA;
+	}
+	public void setGPA(double GPA) {
+		this.GPA = GPA;
+	}
+	public Degree getDegree() {
+		return degree;
+	}
+	public void setDegree(Degree degree) {
+		this.degree = degree;
+	}
+	public Faculty getFaculty() {
+		return faculty;
+	}
+	public void setFaculty(Faculty faculty) {
+		this.faculty = faculty;
+	}
+	public Vector <Course> getCourses() {
+		return courses;
+	}
+	public Journal getJournal() {
+		return journal;
+	}
+	public void setJournal(Journal journal) {
+		this.journal = journal;
+	}
+    public Transcript getTranscript() {
+        return transcript;
+    }
+	public void setTranscript(Transcript transcript) {
+		this.transcript = transcript;
+	}
+	public Vector <Teacher> getRatedTeachers() {
+		return ratedTeachers;
+	}
+	public void setRatedTeachers(Vector <Teacher> ratedTeachers) {
+		this.ratedTeachers = ratedTeachers;
+	}
+	public Schedule gettSchedule() {
+		return this.schedule;
+	}
+ 
+
+	// Student methods	
+	public List <Lesson> getSchedule() {
+		List <Lesson> lessons = new ArrayList <>();
+		for(Teacher teacher: DataBase.users.get(TypeUser.TEACHER).stream().map(u-> (Teacher) u).filter(t-> (t.getLessons().values().stream().filter(v->v.contains(this)).findFirst().orElse(null) != null)).collect(Collectors.toList())) {
+			for(Lesson lesson: teacher.getLessons().keySet()) {
+				if(teacher.getLessons().get(lesson).contains(this) == true) {
+					lessons.add(lesson);
+				}
+			}
+		}
+		return lessons;
+	}
+
+	public boolean registerToCourse(Course course) throws IOException {
+	    if(this.getCourses().contains(course)) return false;
+	    if(this.getTranscript().getSemesters().isEmpty() == true) {
+	      this.getTranscript().getSemesters().add(new Semester(1));
+	    }
+	    if((this.getTranscript().getSemesters().lastElement().getCredits() + course.getCredits()) > 21) return false;
+	    this.getCourses().add(course);
+	    this.getTranscript().getSemesters().lastElement().addCredits(course.getCredits());
+	    DataBase.serializeUsers();
+	    return true;
+	  }
+	
+	public boolean DrawUpSchedule(Teacher teacher, Lesson lesson) throws IOException {
+		try {
+			teacher.getLessons().computeIfAbsent(lesson, k -> new Vector<Student>()).add(this);
+			DataBase.serializeUsers();
+			return true;
+		} 
+		catch(Exception e) {return false;}
+	}
+	
+	public void sendRequest(Request request) throws IOException {
+		DataBase.requests.add(request); DataBase.serializeRequests(); DataBase.serializeUsers();
+	}
+
+	public void doResearch(Research research) throws IOException {
+		DataBase.researches.add(research); DataBase.serializeResearches();
+	}
+
+    public Literature getBook() {
+        return null;
+    }
     
+	
+	public Vector <News> seeNews(String type){
+		return DataBase.news.get(type);
+	}
+
+
+    // Standard methods
+	public boolean equals(Object o) {
+		return super.equals(o);
+	}
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	public int compareTo(User u) {
+	     return super.compareTo(u);
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	public String forProfile() {
+		 return super.forProfile() + "\n-\n" + 
+				"Year of study: " + this.year + "\nTotal GPA: " + this.GPA + "\n-\n" + 
+				"Faculty: " + this.faculty + "\nDegree: " + this.degree + (this.researchStatus ? "\n-\nH-index: " + this.hIndex : "");
+	}
+	public String toString() {
+		return super.toString() + "\n-\n" + 
+			   "Year of study: " + this.year + "\nTotal GPA: " + this.GPA + "\n-\n" + 
+			   "Faculty: " + this.faculty + "\nDegree: " + this.degree + (this.researchStatus ? "\n-\nH-index: " + this.hIndex : "");
+	}
 }
+

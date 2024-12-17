@@ -1,179 +1,141 @@
 package users;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Vector;
+import java.util.Map.Entry;
+import attributes.Action;
+import attributes.DataBase;
+import enums.TypeUser;
+import interfaces.Requestable;
 
-import enums.UserRole;
-import main.Database;
-import additional.LogFile;
-
-public class Admin extends User implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    static final UserRole role = UserRole.ADMIN;
-    private static Admin instance;
-
-    private List<User> users;
-
-    // Приватный конструктор, чтобы предотвратить создание объекта извне
-    private Admin(String login, String password) {
-        super(login, password, role.name()); // передаем имя роли как строку
-        this.users = new ArrayList<>();
+public final class Admin extends User implements Cloneable, Serializable, Requestable
+{
+	private static final long serialVersionUID = 7786797688270823464L;
+    private static final Admin admin = new Admin();
+    
+	private static Vector <Action> logFiles;
+    
+    {
+    	logFiles = new Vector <>();
+    	try {this.setId(this.idGenerator());} 
+    	catch(IOException e) {e.printStackTrace();}
+    }
+    
+    private Admin() {}
+    
+    public Admin(String password, String firstName, String lastName) {
+    	super(password, firstName, lastName);
     }
 
-    // Статический метод для получения экземпляра Admin (Singletone)
-    public static Admin getInstance(String login, String password) throws Exception {
-        if (instance == null) {
-            instance = new Admin(login, password);
-        }
-        return instance;
+    
+    // Getters/Setters
+    public static Admin getAdmin() {
+        return admin;
     }
+	public Vector <Action> seeLogFiles() {
+		return logFiles;
+	}
+	public void setLogFiles(Action action) {
+		Admin.logFiles.add(action);
+	}
+	public String idGenerator() throws IOException {
+		return "admin";
+	}
+    
+	
+    // Administrator methods
+    public void addUser(TypeUser type,User user) {
+		(DataBase.users.get(type)).add(user); 
+	}
+	
+	public static User search(String id) {
+		for(Entry <TypeUser, HashSet <User> > e: DataBase.users.entrySet()) {
+			Optional <User> optional = e.getValue().stream().filter(n -> n.getId().equals(id)).findFirst();
+			if(optional.isPresent()) {User u = optional.get(); return u;}
+		}
+		return null;
+	}
 
-    // Добавление пользователя в базу данных
-    public void addUser(User user) {
-        Database.getInstance().addUser(user);  // Добавление в базу данных
-        users.add(user);
+	public void updatePassword(String id, String newPassword) {
+		search(id).setPassword(newPassword); 
+	}
 
-        // Создание лога о добавлении пользователя
-        Database.getInstance().addLog(new LogFile(
-            new Date(),
-            "USER_ADDED",
-            "Admin added user with ID: " + user.getId(),
-            this.getLogin()
-        ));
+	public void removeUser(String id) {
+		User u = search(id);
+		String userType = u.getClass().getName().substring(6).toUpperCase();
+		DataBase.users.get(enums.TypeUser.valueOf(userType)).remove(u);
+	}
+
+	public void blockUser(String id) {
+			search(id).setStatus(false);
+	}
+    
+	public boolean seeRequest(User user, String requestType, String requestMess) throws IOException {
+		boolean found = false;
+		for(TypeUser tu: DataBase.users.keySet()) {
+			for(User u: DataBase.users.get(tu)) {
+				if(u.getId().equals(requestMess) || u.getId().equals(user.getId())) {
+					found = true;
+					if(requestType.toLowerCase().equals("cp")) u.setPassword(requestMess);
+					if(requestType.toLowerCase().equals("bu")) u.setStatus(false);
+					if(requestType.toLowerCase().equals("unl")) u.setStatus(true);
+					if(requestType.toLowerCase().equals("rem")) removeUser(u.getId());
+				}
+			}
+		} DataBase.serializeUsers(); return found;
+	}
+	
+	
+	public static void serializeLogFiles() throws IOException {
+	    try {
+	      FileOutputStream fos = new FileOutputStream("logFiles.out");
+	      ObjectOutputStream log = new ObjectOutputStream(fos);
+	      log.writeObject(logFiles); log.flush(); log.close(); fos.close();
+	    } 
+	    catch(Exception e) {e.getStackTrace();}
+	}
+	public static Vector<Action> deserializeLogFiles() throws IOException, ClassNotFoundException {
+	    try {
+	      FileInputStream fis = new FileInputStream("logFiles.out");
+	      ObjectInputStream log = new ObjectInputStream(fis);
+	      logFiles = (Vector<Action>) log.readObject();
+	      log.close(); fis.close(); 
+	    } 
+	    catch(Exception e) {e.getStackTrace();}
+	    
+	    return logFiles;
+	}
+    
+    
+    // Standard methods
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	public int compareTo(User u) {
+		return super.compareTo(u);
+	}
+
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+	
+    public String forProfile(){
+    	return super.forProfile();
     }
+	public String toString() {
+		return super.toString();
 
-    // Удаление пользователя из базы данных
-    public boolean removeUser(Long userId) {
-        User userToRemove = getUserById(userId);
-        if (userToRemove != null) {
-            Database.getInstance().deleteUser(userToRemove);  // Удаляем из базы данных
-            users.remove(userToRemove);
-
-            // Создание лога о удалении пользователя
-            Database.getInstance().addLog(new LogFile(
-                new Date(),
-                "USER_REMOVED",
-                "Admin removed user with ID: " + userId,
-                this.getLogin()
-            ));
-
-            return true;
-        }
-        return false;
-    }
-
-    // Обновление данных пользователя
-    public boolean updateUserInfo(Long userId, User newInfo) {
-        User userToUpdate = getUserById(userId);
-        if (userToUpdate != null) {
-            int index = users.indexOf(userToUpdate);
-            users.set(index, newInfo);
-
-            // Логирование обновления данных
-            Database.getInstance().addLog(new LogFile(
-                new Date(),
-                "USER_UPDATED",
-                "Admin updated user with ID: " + userId,
-                this.getLogin()
-            ));
-
-            return true;
-        }
-        return false;
-    }
-
-    // Управление пользователем (добавление, удаление, обновление)
-    public void manageUser(String action, User user) {
-        switch (action.toLowerCase()) {
-            case "add":
-                addUser(user);
-                break;
-            case "remove":
-                removeUser(user.getId());
-                break;
-            case "update":
-                updateUserInfo(user.getId(), user);
-                break;
-            default:
-                System.out.println("Invalid action");
-
-                // Логирование неверного действия
-                Database.getInstance().addLog(new LogFile(
-                    new Date(),
-                    "INVALID_ACTION",
-                    "Admin attempted invalid action: " + action,
-                    this.getLogin()
-                ));
-        }
-    }
-
-    // Просмотр всех логов
-    public List<LogFile> viewLogFiles() {
-        return Database.getInstance().getLogFiles();
-    }
-
-    // Сброс пароля пользователя
-    public void resetUserPassword(User user, String newPassword) {
-        user.changePassword(newPassword);  // Устанавливаем новый пароль
-
-        Database.getInstance().addLog(new LogFile(
-            new Date(),
-            "PASSWORD_RESET",
-            "Admin reset password for user with ID: " + user.getId(),
-            this.getLogin()
-        ));
-    }
-
-    // Генерация отчетов
-    public void generateReports() {
-        System.out.println("Generating reports...");
-
-        Database.getInstance().addLog(new LogFile(
-            new Date(),
-            "REPORT_GENERATED",
-            "Admin generated reports.",
-            this.getLogin()
-        ));
-    }
-
-    // Просмотр данных пользователя
-    public void viewUserDetails(User user) {
-        System.out.println(user);
-
-        Database.getInstance().addLog(new LogFile(
-            new Date(),
-            "VIEW_USER_DETAILS",
-            "Admin viewed details for user with ID: " + user.getId(),
-            this.getLogin()
-        ));
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public String toString() {
-        return super.toString().replace("User", "Admin");
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    // Метод для получения пользователя по ID
-    public User getUserById(Long userId) {
-        for (User user : users) {
-            if (user.getId().equals(Long.valueOf(userId))) {
-                return user;
-            }
-        }
-        return null;
-    }
+	}
 }
+

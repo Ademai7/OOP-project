@@ -1,8 +1,7 @@
 package enums;
 
+/**
+ */
 public enum Faculty {
-	SITE,
-	BS,
-	ISE,
-	SAM
+	FIT, BS, ISE;
 }
