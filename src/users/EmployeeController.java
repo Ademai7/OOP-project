@@ -19,7 +19,7 @@ public class EmployeeController
 			if(answer.toLowerCase().equals("back")) return;
 			if(answer.toLowerCase().equals("yes")) {
 				employee.setResearchStatus(true); System.out.println("\nCongratulations, now you have become a researcher !");
-				DataBase.serializeUsers();
+				DataBase.serilaizeUsers();
 			}
 		}
 		else {
@@ -86,7 +86,7 @@ public class EmployeeController
 					System.out.println("\nThe research was successfully published !");
 					break;
 				case "back":
-					DataBase.serializeResearches();
+					DataBase.serilaizeResearches();
 					return;
 				default:
 					System.out.println("Invalid index, select again: ");
@@ -130,7 +130,7 @@ public class EmployeeController
 							for(User us: DataBase.users.get(tu)) {
 								if(us instanceof Student && us.getId().equals(u.getId())) ((Student)us).sethIndex(((Student)us).gethIndex() + 0.1);
 								else if(us instanceof Employee && us.getId().equals(u.getId()) && !us.getId().equals(employee.getId())) ((Employee)us).sethIndex(((Employee)us).gethIndex() + 0.1);
-								DataBase.serializeUsers();
+								DataBase.serilaizeUsers();
 							}
 						}
 					} System.out.println();

@@ -30,8 +30,8 @@ public final class Admin extends User implements Cloneable, Serializable, Reques
     
     private Admin() {}
     
-    public Admin(String password, String firstName, String lastName) {
-    	super(password, firstName, lastName);
+    public Admin(String password, String firstName, String lastName, int age) {
+    	super(password, firstName, lastName, age);
     }
 
     
@@ -89,11 +89,11 @@ public final class Admin extends User implements Cloneable, Serializable, Reques
 					if(requestType.toLowerCase().equals("rem")) removeUser(u.getId());
 				}
 			}
-		} DataBase.serializeUsers(); return found;
+		} DataBase.serilaizeUsers(); return found;
 	}
 	
 	
-	public static void serializeLogFiles() throws IOException {
+	public static void serilaizeLogFiles() throws IOException {
 	    try {
 	      FileOutputStream fos = new FileOutputStream("logFiles.out");
 	      ObjectOutputStream log = new ObjectOutputStream(fos);

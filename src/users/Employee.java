@@ -30,8 +30,8 @@ public abstract class Employee extends User implements Cloneable, Serializable, 
     	catch(IOException e) {e.printStackTrace();}
     }
     
-    public Employee(String password, String firstName, String lastName) { 
-		super(password, firstName, lastName);
+    public Employee(String password, String firstName, String lastName, int age) { 
+		super(password, firstName, lastName, age);
 	}
     
 	public LocalDate getHireDate() {
@@ -60,7 +60,7 @@ public abstract class Employee extends User implements Cloneable, Serializable, 
 	}
 	public String idGenerator() throws IOException {
 		DataBase.cnt = DataBase.cnt +1;
-		DataBase.serializeId();
+		DataBase.serilaizeId();
 		return String.valueOf(hireDate.getYear()).substring(2) + "EM" +  "0".repeat(5- Integer.toString(DataBase.cnt).length()) + (DataBase.cnt -1);
 	}
 	public Vector<News> seeNews(String type){
@@ -72,7 +72,7 @@ public abstract class Employee extends User implements Cloneable, Serializable, 
 	
 	
 	public void doResearch(Research research) throws IOException {
-		DataBase.researches.add(research); DataBase.serializeResearches();
+		DataBase.researches.add(research); DataBase.serilaizeResearches();
 	}
 	
 	public void sendMessage(Employee e, Message m) {

@@ -2,6 +2,7 @@ package users;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,12 +45,13 @@ public class Student extends User implements Serializable, SendableAndResearchab
     	transcript = new Transcript();
     	setRatedTeachers(new Vector<>());
     	schedule = new Schedule();
-    	
+    	try {this.setId(this.idGenerator()); System.out.println("Id ");} 
+    	catch(IOException e) {e.printStackTrace();}
     }
     
 
-    public Student(String password, String firstName, String lastName, int year, double GPA, Degree degree, Faculty faculty) {
-		super(password, firstName, lastName);
+    public Student(String password, String firstName, String lastName, int age, int year, double GPA, Degree degree, Faculty faculty) {
+		super(password, firstName, lastName, age);
 		this.year = year;
 		this.GPA = GPA;
 		this.degree = degree;
@@ -142,31 +144,36 @@ public class Student extends User implements Serializable, SendableAndResearchab
 	    if((this.getTranscript().getSemesters().lastElement().getCredits() + course.getCredits()) > 21) return false;
 	    this.getCourses().add(course);
 	    this.getTranscript().getSemesters().lastElement().addCredits(course.getCredits());
-	    DataBase.serializeUsers();
+	    DataBase.serilaizeUsers();
 	    return true;
 	  }
 	
 	public boolean DrawUpSchedule(Teacher teacher, Lesson lesson) throws IOException {
 		try {
 			teacher.getLessons().computeIfAbsent(lesson, k -> new Vector<Student>()).add(this);
-			DataBase.serializeUsers();
+			DataBase.serilaizeUsers();
 			return true;
 		} 
 		catch(Exception e) {return false;}
 	}
 	
 	public void sendRequest(Request request) throws IOException {
-		DataBase.requests.add(request); DataBase.serializeRequests(); DataBase.serializeUsers();
+		DataBase.requests.add(request); DataBase.serilaizeRequests(); DataBase.serilaizeUsers();
 	}
 
 	public void doResearch(Research research) throws IOException {
-		DataBase.researches.add(research); DataBase.serializeResearches();
+		DataBase.researches.add(research); DataBase.serilaizeResearches();
 	}
 
     public Literature getBook() {
         return null;
     }
     
+	public String idGenerator() throws IOException {
+		DataBase.cnt = DataBase.cnt + 1;
+		DataBase.serilaizeId();
+		return String.valueOf(LocalDate.now().getYear() - this.year +1).substring(2) + DataBase.idStudDegree.get(this.getDegree()) + "0".repeat(5- Integer.toString(DataBase.cnt).length()) + (DataBase.cnt -1);
+	}
 	
 	public Vector <News> seeNews(String type){
 		return DataBase.news.get(type);

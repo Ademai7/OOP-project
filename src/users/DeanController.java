@@ -133,8 +133,8 @@ public class DeanController implements StudentViewable, Viewable
 			case "16":
 				System.out.println();
 				Admin.getAdmin().setLogFiles(new Action(LocalDate.now(), dean, "logged out"));
-				Admin.serializeLogFiles();
-				DataBase.serializeUsers();
+				Admin.serilaizeLogFiles();
+				DataBase.serilaizeUsers();
 				return;
 			default:
 				System.out.println("\nWe don't have such an index. Please select again:");
@@ -160,7 +160,7 @@ public class DeanController implements StudentViewable, Viewable
     			System.out.println("Error, no such variant! Enter again:  ");
     			facultyName = br.readLine().toUpperCase();
     	}
-    	Dean d = new Dean(password, firstName, lastName, enums.Faculty.valueOf(facultyName));
+    	Dean d = new Dean(password, firstName, lastName, age, enums.Faculty.valueOf(facultyName));
     	System.out.print("\n6. Id of new dean is: " + d.getId() + "\n");
     	return d;
     }
@@ -334,7 +334,7 @@ public class DeanController implements StudentViewable, Viewable
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: remove user\n2. Reason of dismissal: " + req.getRequestMess());
 			    			System.out.print("\nDo you approve of the dismissal or not ?\nEnter 'yes' if you agree or 'no' if you disagree: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); DataBase.serializeUsers(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); DataBase.serilaizeUsers(); return;}
 			    			if(answer.toLowerCase().equals("no")) System.out.println("\nRefused. Request successfully processed !");
 			    	    	if(answer.toLowerCase().equals("yes")) {
 			    	    		if(dean.seeRequest(dean, "rem", req.getFrom().getId())) System.out.println("\nApproved. Request successfully processed !");
@@ -348,7 +348,7 @@ public class DeanController implements StudentViewable, Viewable
 			    	} 
 			    	
 			    	if(requestsNumb == 0) System.out.println("\nYou have answered all the sent requests.");
-		        	DataBase.serializeRequests();
+		        	DataBase.serilaizeRequests();
 		    	}
     		}
     	}

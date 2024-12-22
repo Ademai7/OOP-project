@@ -60,7 +60,7 @@ public class StudentController implements ViewableAndDrawupable
 				break;
 			case "3":
 				doResearch();
-				DataBase.serializeResearches();
+				DataBase.serilaizeResearches();
 				break;
 			case "4":
 				seeResearches();
@@ -175,12 +175,12 @@ public class StudentController implements ViewableAndDrawupable
 			case "18":
 				System.out.println();
 				Admin.getAdmin().setLogFiles(new Action(LocalDate.now(), student, "logged out"));
-		    	Admin.serializeLogFiles();
-				Librarian.serializeAvailableBooks();
-				Librarian.serializeGivenBooks();
-				DataBase.serializeOraganizations();
-				DataBase.serializeUsers();
-				DataBase.serializeResearches();
+		    	Admin.serilaizeLogFiles();
+				Librarian.serilaizeAvailableBooks();
+				Librarian.serilaizeGivenBooks();
+				DataBase.serilaizeOraganizations();
+				DataBase.serilaizeUsers();
+				DataBase.serilaizeResearches();
 				return;
 			default:
 				System.out.println("\nWe don't have such an index. Please select again:");
@@ -195,6 +195,8 @@ public class StudentController implements ViewableAndDrawupable
     	String firstName = br.readLine();
     	System.out.print("\n3. Enter last name: ");
     	String lastName = br.readLine();
+    	System.out.print("\n4. Enter age: ");
+    	int age = Integer.parseInt(br.readLine());
     	System.out.print("\n5. Enter year of study: ");
     	int year = Integer.parseInt(br.readLine());
     	System.out.print("\n6. Enter GPA:  ");
@@ -217,7 +219,8 @@ public class StudentController implements ViewableAndDrawupable
 				System.out.println("Error, no such variant! Enter again:  ");
 				facultyName = br.readLine().toUpperCase();
 		}
-    	Student s = new Student(password, firstName, lastName, year, GPA, enums.Degree.valueOf(degree), enums.Faculty.valueOf(facultyName));
+    	Student s = new Student(password, firstName, lastName, age, year, GPA, enums.Degree.valueOf(degree), enums.Faculty.valueOf(facultyName));
+    	s.setId(s.idGenerator());
     	System.out.println("8. Id of new student is: " + s.getId() + "\n");
     	return s;
     }
@@ -457,7 +460,7 @@ public class StudentController implements ViewableAndDrawupable
         					int totalRate = (rate1 + rate2 + rate3) / 3;
         					if(totalRate >= 1 && totalRate <= 5) {
         						t.setRate(t.getRate() + totalRate); t.setRateCounter(t.getRateCounter() + 1);
-        						student.getRatedTeachers().add(t); DataBase.serializeUsers(); cnt -= 1;
+        						student.getRatedTeachers().add(t); DataBase.serilaizeUsers(); cnt -= 1;
         						System.out.println("\n'" + t.getFirstName() + " " + t.getLastName() + "' was successfully evaluated !");
         					}
         				}
@@ -546,7 +549,7 @@ public class StudentController implements ViewableAndDrawupable
 				student.sendRequest(new Request(student, Admin.getAdmin(), "cp", requestMess));
 				System.out.println("\nSuccessfully sent !");
 			}
-		} DataBase.serializeUsers();
+		} DataBase.serilaizeUsers();
 	}
 
 	public static void doResearch() throws IOException {
@@ -556,7 +559,7 @@ public class StudentController implements ViewableAndDrawupable
 			if(answer.toLowerCase().equals("back")) return;
 			if(answer.toLowerCase().equals("yes")) {
 				student.setResearchStatus(true); System.out.println("\nCongratulations, now you have become a researcher !"); 
-				DataBase.serializeUsers();
+				DataBase.serilaizeUsers();
 			}
 		}
 		else {
@@ -620,12 +623,12 @@ public class StudentController implements ViewableAndDrawupable
 							else System.out.println("\nThis user is not researcher !");
 						}
 
-						DataBase.serializeResearches();
+						DataBase.serilaizeResearches();
 					}
 					System.out.println("\nThe research was successfully published !");
 					break;
 				case "back":
-					DataBase.serializeResearches();
+					DataBase.serilaizeResearches();
 					return;
 				default:
 					System.out.println("Invalid index, select again: ");
@@ -669,7 +672,7 @@ public class StudentController implements ViewableAndDrawupable
 							for(User us: DataBase.users.get(tu)) {
 								if(us instanceof Student && us.getId().equals(u.getId()) && !us.getId().equals(student.getId())) ((Student)us).sethIndex(((Student)us).gethIndex() + 0.1);
 								else if(us instanceof Employee && us.getId().equals(u.getId())) ((Employee)us).sethIndex(((Employee)us).gethIndex() + 0.1);
-								DataBase.serializeUsers();
+								DataBase.serilaizeUsers();
 							}
 						}
 					} System.out.println();

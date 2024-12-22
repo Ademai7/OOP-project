@@ -163,10 +163,10 @@ public class TeacherController implements ViewableAndDrawupable, CanManageCourse
 			case "18":
 				System.out.println();
 				Admin.getAdmin().setLogFiles(new Action(LocalDate.now(), teacher, "logged out"));
-		    	Admin.serializeLogFiles();
-		    	DataBase.serializeUsers();
-				Librarian.serializeAvailableBooks();
-				Librarian.serializeGivenBooks();
+		    	Admin.serilaizeLogFiles();
+		    	DataBase.serilaizeUsers();
+				Librarian.serilaizeAvailableBooks();
+				Librarian.serilaizeGivenBooks();
 				return;
 			default:
 				System.out.println("\nWe don't have such an index. Please select again:");
@@ -201,7 +201,7 @@ public class TeacherController implements ViewableAndDrawupable, CanManageCourse
 				System.out.println("Error, no such variant! Enter again:  ");
 				facultyName = br.readLine().toUpperCase();
 		}
-    	Teacher t = new Teacher(password, firstName, lastName, enums.TypeTeacher.valueOf(teacherType), enums.Faculty.valueOf(facultyName));
+    	Teacher t = new Teacher(password, firstName, lastName, age, enums.TypeTeacher.valueOf(teacherType), enums.Faculty.valueOf(facultyName));
     	System.out.print("\n7. Id of new teacher is:  " + t.getId() + "\n");
     	return t;
     }
@@ -285,14 +285,14 @@ public class TeacherController implements ViewableAndDrawupable, CanManageCourse
 	                students.stream().forEach(s->  s.getTranscript().getSemesters().add(new Semester(1)));
 	                students.stream().forEach(s->s.getTranscript().getSemesters().lastElement().getAttestations().computeIfAbsent(course, k -> new Attestation(course, s.getJournal().getTotal(course))));
 	                students.stream().forEach(s-> s.getJournal().clear());
-	                DataBase.serializeUsers();
+	                DataBase.serilaizeUsers();
 	            }
 	            break;
 	          case "2":
 	            System.out.println("Do you want to close 2st attestation? (1 - YES, 2 - NO)");
 	            if(Integer.parseInt(br.readLine()) == 1) {
 	              students.stream().forEach(s->s.getTranscript().getSemesters().lastElement().getAttestations().get(course).setSecondAttestation(s.getJournal().getTotal(course)));
-	              DataBase.serializeUsers();
+	              DataBase.serilaizeUsers();
 	            }
 	            break;
 	          case "3":
@@ -307,7 +307,7 @@ public class TeacherController implements ViewableAndDrawupable, CanManageCourse
 	          });
 	            students.stream().filter(s-> (s.getTranscript().getSemesters().lastElement().getAttestations().get(course).getFirstAttestation() + s.getTranscript().getSemesters().lastElement().getAttestations().get(course).getSecondAttestation() < 30)).forEach(s->s.getCourses().remove(course));
 	            students.stream().filter(s-> (s.getTranscript().getSemesters().lastElement().getAttestations().get(course).getFirstAttestation() + s.getTranscript().getSemesters().lastElement().getAttestations().get(course).getSecondAttestation() < 30)).forEach(n-> System.out.println(n.getFirstName() + n.getLastName() + " gets retake"));
-	            DataBase.serializeUsers();
+	            DataBase.serilaizeUsers();
 	            break;
 	          }
 	          } 

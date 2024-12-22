@@ -1,6 +1,5 @@
 package attributes;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -62,16 +61,16 @@ public class DataBase
 	}
 	
 	public static void SerializeAll() throws IOException {
-		serializeUsers();
-		serializeCourses();
-		serializeNews();
-		serializeId();
-		serializeResearches();
-		serializeRequests();
-		Admin.serializeLogFiles();
-		Librarian.serializeAvailableBooks();
-		Librarian.serializeGivenBooks();
-		serializeOraganizations();
+		serilaizeUsers();
+		serilaizeCourses();
+		serilaizeNews();
+		serilaizeId();
+		serilaizeResearches();
+		serilaizeRequests();
+		Admin.serilaizeLogFiles();
+		Librarian.serilaizeAvailableBooks();
+		Librarian.serilaizeGivenBooks();
+		serilaizeOraganizations();
 	}
 	
 	public static void DeserializeAll() throws ClassNotFoundException, IOException {
@@ -87,46 +86,33 @@ public class DataBase
 		deserializeOraganizations();
 	}
 	
-    public static void serializeUsers() throws IOException {
-    	try {
-    	File dataDir = new File("data");
-    	if (!dataDir.exists()) {
-    	    boolean dirCreated = dataDir.mkdir();
-    	    if (!dirCreated) {
-    	        System.out.println("Не удалось создать папку data.");
-    	    }
-    	}
-
-			FileOutputStream fos = new FileOutputStream("data/users.out");
+    public static void serilaizeUsers() throws IOException {
+		try {
+			FileOutputStream fos = new FileOutputStream("users.out");
 			ObjectOutputStream user = new ObjectOutputStream(fos);
 			user.writeObject(users);
 			user.flush();
 			user.close();
 			fos.close();
 		} 
-		catch(Exception e) {e.printStackTrace();
-		}
+		catch(Exception e) {e.getStackTrace();}
     }
-    
-		
-    
 	public static HashMap <TypeUser, HashSet <User> > deserializeUsers() throws IOException, ClassNotFoundException {
 		try {
-            
-			FileInputStream fis = new FileInputStream("data/users.out");
+			FileInputStream fis = new FileInputStream("users.out");
 			ObjectInputStream user = new ObjectInputStream(fis);
 			users = (HashMap <TypeUser, HashSet <User> >)user.readObject();
 			user.close();
 			fis.close();
 		} 
-		catch(Exception e) {e.printStackTrace();}
+		catch(Exception e) {e.getStackTrace();}
 		
 		return users;
 	}
 
-    public static void serializeResearches() throws IOException {
+    public static void serilaizeResearches() throws IOException {
 		try {
-			FileOutputStream fos = new FileOutputStream("data/researches.out");
+			FileOutputStream fos = new FileOutputStream("researches.out");
 			ObjectOutputStream research = new ObjectOutputStream(fos);
 			research.writeObject(researches); research.flush(); research.close();
 			fos.close();
@@ -135,48 +121,40 @@ public class DataBase
     }
 	public static HashSet <Research> deserializeResearches() throws IOException, ClassNotFoundException {
 		try {
-			FileInputStream fis = new FileInputStream("data/researches.out");
+			FileInputStream fis = new FileInputStream("researches.out");
 			ObjectInputStream research = new ObjectInputStream(fis);
 			researches = (HashSet <Research>) research.readObject();
 			research.close(); fis.close();
 		} 
-		catch(Exception e) {e.printStackTrace();}
+		catch(Exception e) {e.getStackTrace();}
 		
 		return researches;
 	}
 
-	public static void serializeRequests() throws IOException {
-		File requestsFile = new File("data/requests.out");
-		if (!requestsFile.exists()) {
-		    requestsFile.createNewFile();  // Создаст пустой файл
-		}
-	    try {
-	        FileOutputStream fos = new FileOutputStream("data/requests.out");
-	        ObjectOutputStream request = new ObjectOutputStream(fos);
-	        request.writeObject(requests);
-	        request.flush();
-	        request.close();
-	        fos.close();
-	    } catch (IOException e) {
-	        System.err.println("Error while serializing requests: " + e.getMessage());
-	        e.printStackTrace();
-	    }
-	}
+    public static void serilaizeRequests() throws IOException {
+		try {
+			FileOutputStream fos = new FileOutputStream("requests.out");
+			ObjectOutputStream request = new ObjectOutputStream(fos);
+			request.writeObject(requests); request.flush(); request.close();
+			fos.close();
+		} 
+		catch(Exception e) {e.getStackTrace();}
+    }
 	public static Vector <Request> deserializeRequests() throws IOException, ClassNotFoundException {
 		try {
-			FileInputStream fis = new FileInputStream("data/requests.out");
+			FileInputStream fis = new FileInputStream("requests.out");
 			ObjectInputStream request = new ObjectInputStream(fis);
 			requests = (Vector <Request>)request.readObject();
 			request.close(); fis.close();
 		} 
-		catch(Exception e) {e.printStackTrace();}
+		catch(Exception e) {e.getStackTrace();}
 		
 		return requests;
 	}
  	
-    public static void serializeCourses() throws IOException {
+    public static void serilaizeCourses() throws IOException {
 		try {
-			FileOutputStream fos = new FileOutputStream("data/courses.out");
+			FileOutputStream fos = new FileOutputStream("courses.out");
 			ObjectOutputStream course = new ObjectOutputStream(fos);
 			course.writeObject(courses);
 			course.flush();
@@ -188,91 +166,91 @@ public class DataBase
     }
 	public static HashSet <Course> deserializeCourses() throws IOException, ClassNotFoundException {
 		try {
-			FileInputStream fis = new FileInputStream("data/courses.out");
+			FileInputStream fis = new FileInputStream("courses.out");
 			ObjectInputStream course = new ObjectInputStream(fis);
 			courses = (HashSet <Course>) course.readObject();
 			course.close();
 			fis.close();
 			
 		} catch(Exception e) {
-			e.printStackTrace();
+			e.getStackTrace();
 		}
 		return courses;
 	}
 	
-	public static void serializeNews() throws IOException {
+	public static void serilaizeNews() throws IOException {
 		try {
-			FileOutputStream fos = new FileOutputStream("data/news.out");
+			FileOutputStream fos = new FileOutputStream("news.out");
 			ObjectOutputStream newsList = new ObjectOutputStream(fos);
 			newsList.writeObject(news);
 			newsList.flush();
 			newsList.close();
 			fos.close();
 		} catch(Exception e) {
-			e.printStackTrace();
+			e.getStackTrace();
 		}
     }
 	public static HashMap <String , Vector<News> > deserializeNews() throws IOException, ClassNotFoundException {
 		try {
-			FileInputStream fis = new FileInputStream("data/news.out");
+			FileInputStream fis = new FileInputStream("news.out");
 			ObjectInputStream newsList = new ObjectInputStream(fis);
 			news = (HashMap <String , Vector<News> >) newsList.readObject();
 			newsList.close();
 			fis.close();
 			
 		} catch(Exception e) {
-			e.printStackTrace();
+			e.getStackTrace();
 		}
 		return news;
 	}
 	
-    public static void serializeId() throws IOException {
+    public static void serilaizeId() throws IOException {
 	    try {
-	      FileOutputStream fos = new FileOutputStream("data/idGenerator.out");
+	      FileOutputStream fos = new FileOutputStream("idGenerator.out");
 	      ObjectOutputStream count = new ObjectOutputStream(fos);
 	      count.writeObject(cnt);
 	      count.flush();
 	      count.close();
 	      fos.close();
 	    } catch(Exception e) {
-	    	e.printStackTrace();
+	      e.getStackTrace();
 	    }
     }
 	public static int deserializeId() throws IOException, ClassNotFoundException {
 	    try {
-	      FileInputStream fis = new FileInputStream("data/idGenerator.out");
+	      FileInputStream fis = new FileInputStream("idGenerator.out");
 	      ObjectInputStream count = new ObjectInputStream(fis);
 	      cnt = (int) count.readObject();
 	      count.close();
 	      fis.close();
 	      
 	    } catch(Exception e) {
-	    	e.printStackTrace();
+	      e.getStackTrace();
 	    }
 	    return cnt;
 	}
 	
-	public static void serializeOraganizations() throws IOException {
+	public static void serilaizeOraganizations() throws IOException {
 		  try {
-		   FileOutputStream fos = new FileOutputStream("data/organization.out");
+		   FileOutputStream fos = new FileOutputStream("organization.out");
 		   ObjectOutputStream newsList = new ObjectOutputStream(fos);
 		   newsList.writeObject(organizations);
 		   newsList.flush();
 		   newsList.close();
 		   fos.close();
 		  } catch(Exception e) {
-			  e.printStackTrace();
+		   e.getStackTrace();
 		  }
 	}
 	public static Vector<Organization> deserializeOraganizations() throws IOException, ClassNotFoundException {
 		try {
-		   FileInputStream fis = new FileInputStream("data/organization.out");
+		   FileInputStream fis = new FileInputStream("organization.out");
 		   ObjectInputStream newsList = new ObjectInputStream(fis);
 		   organizations = (Vector<Organization>) newsList.readObject();
 		   newsList.close();
 		   fis.close();
 		 } catch(Exception e) {
-			 e.printStackTrace();
+		   e.getStackTrace();
 		 }
 		
 		 return organizations;

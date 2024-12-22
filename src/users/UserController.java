@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashMap;
 
 import attributes.Action;
 import attributes.DataBase;
+import attributes.Literature;
 import enums.Faculty;
 import enums.TypeCourse;
 import enums.TypeLesson;
@@ -22,44 +24,44 @@ public class UserController
 			System.out.println("For exit enter - exit.\n");
 			
 			System.out.print("Enter your ID: ");
-			String login = br.readLine();
-			if(login.toLowerCase().equals("exit")) {System.out.println("\nBye-bye. Have a nice day!");DataBase.serializeUsers();break;}
+			String id = br.readLine();
+			if(id.toLowerCase().equals("exit")) {System.out.println("\nBye-bye. Have a nice day!");DataBase.serilaizeUsers();break;}
 			
 			System.out.print("Enter your password: ");
 			String password = br.readLine();
-			if(password.toLowerCase().equals("exit")) {System.out.println("\nBye-bye. Have a nice day!");DataBase.serializeUsers();break;}
+			if(password.toLowerCase().equals("exit")) {System.out.println("\nBye-bye. Have a nice day!");DataBase.serilaizeUsers();break;}
 			
-			User u = DataBase.isRegistered(login, password);
+			User u = DataBase.isRegistered(id, password);
 			
-//			if(u == null) System.out.println("\nError. Incorrect login or password. Try again:\n");
-//			else {
-//				if(u instanceof Student) {
-//					Student s = (Student)u;
-//					if(Librarian.givenBooks.get(s) !=null) {
-//					for(Literature l : Librarian.givenBooks.get(s)) {
-//						if(Period.between(LocalDate.now(), l.getDeadline().plusDays(3)).isNegative()) {
-//							s.setStatus(false);
-//							DataBase.serializeUsers();
-//						}
-//					}
-//					}
-//				}
-//				if(u instanceof Teacher) {
-//					Teacher t = (Teacher)u;
-//					if(Librarian.givenBooks.get(t) !=null) {
-//					for(Literature l : Librarian.givenBooks.get(t)) { 
-//						if(Period.between(LocalDate.now(), l.getDeadline().plusDays(3)).isNegative()) {
-//							t.setStatus(false);
-//							DataBase.serializeUsers();
-//						}
-//					}
-//					}
-//				}
-//				
-//				if(!u.isStatus()) {System.out.println("\nYour account is blocked, to find out the reason, contact the dean's office."); break;}
-//				System.out.println("\nHello " + u.getFirstName() + ". What's your focus for today ?");
-//				Admin.getAdmin().setLogFiles(new Action(LocalDate.now(), u, "logged in")); Admin.serializeLogFiles();
-//				
+			if(u == null) System.out.println("\nError. Incorrect ID or password. Try again:\n");
+			else {
+				if(u instanceof Student) {
+					Student s = (Student)u;
+					if(Librarian.givenBooks.get(s) !=null) {
+					for(Literature l : Librarian.givenBooks.get(s)) {
+						if(Period.between(LocalDate.now(), l.getDeadline().plusDays(3)).isNegative()) {
+							s.setStatus(false);
+							DataBase.serilaizeUsers();
+						}
+					}
+					}
+				}
+				if(u instanceof Teacher) {
+					Teacher t = (Teacher)u;
+					if(Librarian.givenBooks.get(t) !=null) {
+					for(Literature l : Librarian.givenBooks.get(t)) { 
+						if(Period.between(LocalDate.now(), l.getDeadline().plusDays(3)).isNegative()) {
+							t.setStatus(false);
+							DataBase.serilaizeUsers();
+						}
+					}
+					}
+				}
+				
+				if(!u.isStatus()) {System.out.println("\nYour account is blocked, to find out the reason, contact the dean's office."); break;}
+				System.out.println("\nHello " + u.getFirstName() + ". What's your focus for today ?");
+				Admin.getAdmin().setLogFiles(new Action(LocalDate.now(), u, "logged in")); Admin.serilaizeLogFiles();
+				
 				if(u instanceof Student) {
 					Student s = (Student)u;
 					StudentController.logIn(s);
@@ -87,7 +89,7 @@ public class UserController
 			}
 		}
 		
-	
+	}
 	
     public static <T> void viewProfile(T t) throws IOException {
     	System.out.println("\nMy profile:\n\n" + ((User)t).forProfile());

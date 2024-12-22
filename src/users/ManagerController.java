@@ -206,9 +206,9 @@ public class ManagerController implements StudentViewable, Viewable
 			case "19":
 				System.out.println();
 				Admin.getAdmin().setLogFiles(new Action(LocalDate.now(), manager, "logged out"));
-				Admin.serializeLogFiles();
-				DataBase.serializeNews();
-				DataBase.serializeUsers();
+				Admin.serilaizeLogFiles();
+				DataBase.serilaizeNews();
+				DataBase.serilaizeUsers();
 				return;
 			default:
 				System.out.println("\nWe don't have such an index. Please select again:");
@@ -224,6 +224,7 @@ public class ManagerController implements StudentViewable, Viewable
     	System.out.print("\n3. Enter last name: ");
     	String lastName = br.readLine();
     	System.out.print("\n4. Enter age: ");
+    	int age = Integer.parseInt(br.readLine());
     	System.out.println("\n5. Choose type of manager from list:\n" + Arrays.asList(enums.TypeManager.values()) + "\n");
     	String managerType = br.readLine().toUpperCase();
     	try {
@@ -233,7 +234,7 @@ public class ManagerController implements StudentViewable, Viewable
 				System.out.println("Error, no such variant! Enter again:  ");
 				managerType = br.readLine().toUpperCase();
 		}
-    	Manager m = new Manager(password, firstName, lastName, enums.TypeManager.valueOf(managerType));
+    	Manager m = new Manager(password, firstName, lastName, age, enums.TypeManager.valueOf(managerType));
     	System.out.print("6. Id of new manager is: " + m.getId() + "\n");
     	return m;
     }
@@ -507,7 +508,7 @@ public class ManagerController implements StudentViewable, Viewable
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: Add/Drop, add course\n2. Course name: " + req.getRequestMess());
 			    			System.out.print("\nEnter 'add' to add course: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); DataBase.serializeUsers(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); DataBase.serilaizeUsers(); return;}
 			    			if(answer.toLowerCase().equals("add")) {
 		    					System.out.println("\nRequest successfully processed !");
 		    					DataBase.requests.remove(i);
@@ -517,7 +518,7 @@ public class ManagerController implements StudentViewable, Viewable
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: Add/Drop, drop course\n2. Course name: " + req.getRequestMess());
 			    			System.out.print("\nEnter 'drop' to drop course: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); DataBase.serializeUsers(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); DataBase.serilaizeUsers(); return;}
 			    			if(answer.toLowerCase().equals("drop")) {
 			    				
 		    					System.out.println("\nRequest successfully processed !");
@@ -527,7 +528,7 @@ public class ManagerController implements StudentViewable, Viewable
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: change schedule\n2. User ID: " + req.getRequestMess());
 			    			System.out.print("\nEnter 'change' to change schedule: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); DataBase.serializeUsers(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); DataBase.serilaizeUsers(); return;}
 			    			if(answer.toLowerCase().equals("change")) {
 		    					System.out.println("\nRequest successfully processed !");
 		    				} requestsNumb -= 1;
@@ -536,7 +537,7 @@ public class ManagerController implements StudentViewable, Viewable
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: change teacher\n2. Course name/New teacher ID: " + req.getRequestMess());
 				    		System.out.print("\nEnter 'change' to change teacher: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); DataBase.serializeUsers(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); DataBase.serilaizeUsers(); return;}
 			    			if(answer.toLowerCase().equals("change")) {
 		    					System.out.println("\nRequest successfully processed !");
 		    				} requestsNumb -= 1;
@@ -548,7 +549,7 @@ public class ManagerController implements StudentViewable, Viewable
 			    		}
 		        		
 			    		if(requestsNumb == 0) System.out.println("\nYou have answered all the sent requests.");
-			        	DataBase.serializeRequests();
+			        	DataBase.serilaizeRequests();
 	        		}
 		    	}
 	    	}

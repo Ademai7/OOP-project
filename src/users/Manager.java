@@ -2,6 +2,7 @@ package users;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Vector;
 import attributes.Course;
 import attributes.DataBase;
@@ -20,8 +21,8 @@ public class Manager extends Employee implements Serializable
 	private TypeManager type;
 
 	
-	public Manager( String password, String firstName, String lastName, TypeManager type) {
-		super( password, firstName, lastName);
+	public Manager( String password, String firstName, String lastName, int age, TypeManager type) {
+		super( password, firstName, lastName, age);
 		this.type = type;
 	}
 
@@ -40,7 +41,7 @@ public class Manager extends Employee implements Serializable
 	public boolean addCourse(Course course, Vector <Lesson> lessons) throws IOException {
 		try {
 	    	DataBase.courses.add(new Course(course, lessons));
-	    	DataBase.serializeCourses();
+	    	DataBase.serilaizeCourses();
 	    	return true;
 		} 
 		catch(Exception e) {}
@@ -51,7 +52,7 @@ public class Manager extends Employee implements Serializable
 		try {
 			Vector <Student> students = new Vector <Student>();
 			t.getLessons().put(l, students);
-	    	DataBase.serializeUsers(); DataBase.serializeCourses();
+	    	DataBase.serilaizeUsers(); DataBase.serilaizeCourses();
 	    	return true;
 		} 
 		catch(Exception e) { }
@@ -59,7 +60,7 @@ public class Manager extends Employee implements Serializable
 	}
 	
 	public void sendRequest(Request request) throws IOException {
-		DataBase.requests.add(request); DataBase.serializeRequests();
+		DataBase.requests.add(request); DataBase.serilaizeRequests();
 	}
 	
     public boolean seeRequest(User u, String requestType, String requestMess) {

@@ -1,21 +1,22 @@
 package users;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
 
-import enums.TypeUser;
+
 public abstract class User implements Cloneable, Comparable <User>, Serializable
 {
 	private static final long serialVersionUID = -3210816682560011695L;
-	private String login;
+	/** users have unique id from generator id 
+	 */
 	private String id;
     private String password;
-    private TypeUser role;
     
     private String firstName;
     private String lastName;
 
-    
+    private int age;
 
     private boolean status;
     
@@ -25,11 +26,11 @@ public abstract class User implements Cloneable, Comparable <User>, Serializable
     
     public User() {}
    
-    public User(String password, String firstName, String lastName) {
+    public User(String password, String firstName, String lastName, int age) {
     	this.password = password;
     	this.firstName = firstName;
     	this.lastName = lastName;
-    	
+    	this.age = age;
     	
     }
     
@@ -57,6 +58,12 @@ public abstract class User implements Cloneable, Comparable <User>, Serializable
 	}
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
 	}
 	public boolean isStatus() {
 		return status;
@@ -89,27 +96,12 @@ public abstract class User implements Cloneable, Comparable <User>, Serializable
 	
 	public String forProfile() {
 		 return "User ID: "  + this.id + "\n-\n" + 
-				"First name: " + this.firstName + "\nLast name: " + this.lastName;
+				"First name: " + this.firstName + "\nLast name: " + this.lastName + "\nAge: " + this.age;
 	}
 	public String toString() {
-		return "User login: "  + this.login + "\n-\n" + 
+		return "User ID: "  + this.id + "\n-\n" + 
 			   "First name: " + this.firstName + "\nLast name: " + this.lastName;
 	}
 	
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public TypeUser getRole() {
-		return role;
-	}
-
-	public void setRole(TypeUser role) {
-		this.role = role;
-	}
+	public abstract String idGenerator() throws IOException;
 }

@@ -16,8 +16,8 @@ public class Dean extends Employee implements Serializable, SendableAndResearcha
 
 	private Faculty faculty;
     
-	public Dean(String password, String firstName, String lastName,  Faculty faculty) {
-		super(password, firstName, lastName);
+	public Dean(String password, String firstName, String lastName, int age, Faculty faculty) {
+		super(password, firstName, lastName, age);
 		this.faculty = faculty;
 	}
 
@@ -33,7 +33,7 @@ public class Dean extends Employee implements Serializable, SendableAndResearcha
 	
 	// Dean methods
 	public void sendRequest(Request request) throws IOException {
-		DataBase.requests.add(request); DataBase.serializeRequests();
+		DataBase.requests.add(request); DataBase.serilaizeRequests();
 	}
 	
     public boolean seeRequest(User u, String requestType, String requestMess) throws IOException {

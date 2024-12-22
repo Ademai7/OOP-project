@@ -22,8 +22,8 @@ public class Librarian extends Employee implements Serializable, SendableAndRese
 	public static Vector <Literature > availableBooks = new Vector<>();
 
 	
-	public Librarian(String password, String firstName, String lastName) {
-		super(password, firstName, lastName);
+	public Librarian(String password, String firstName, String lastName, int age) {
+		super(password, firstName, lastName, age);
 	}
     
     
@@ -37,7 +37,7 @@ public class Librarian extends Employee implements Serializable, SendableAndRese
 	}
 
 	public void sendRequest(Request request) throws IOException {
-		DataBase.requests.add(request); DataBase.serializeRequests();
+		DataBase.requests.add(request); DataBase.serilaizeRequests();
 	}
 
 	public void doResearch(Research research) throws IOException {
@@ -83,7 +83,7 @@ public class Librarian extends Employee implements Serializable, SendableAndRese
 	}
 	
 	
-	public static void serializeAvailableBooks() throws IOException {
+	public static void serilaizeAvailableBooks() throws IOException {
 		try {
 			FileOutputStream fos2 = new FileOutputStream("availableBooks.out");
 			ObjectOutputStream book2 = new ObjectOutputStream(fos2);
@@ -95,7 +95,7 @@ public class Librarian extends Employee implements Serializable, SendableAndRese
 			e.getStackTrace();
 		}
     }
-	public static void serializeGivenBooks() throws IOException {
+	public static void serilaizeGivenBooks() throws IOException {
 		try {
 			FileOutputStream fos = new FileOutputStream("givenBooks.out");
 			ObjectOutputStream book = new ObjectOutputStream(fos);

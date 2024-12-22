@@ -33,8 +33,8 @@ public class Teacher extends Employee implements Cloneable, Serializable, Sendab
     }
 
     
-    public Teacher(String password, String firstName, String lastName, TypeTeacher type, Faculty faculty) {
-    	super(password, firstName, lastName);
+    public Teacher(String password, String firstName, String lastName, int age, TypeTeacher type, Faculty faculty) {
+    	super(password, firstName, lastName, age);
     	this.type = type;
     	this.faculty = faculty;
     	if(this.type.equals(TypeTeacher.PROFESSOR)) super.setResearchStatus(true);
@@ -85,7 +85,7 @@ public class Teacher extends Employee implements Cloneable, Serializable, Sendab
 	      return false;
 	    }
 	    marks.add(m);
-	    DataBase.serializeUsers();
+	    DataBase.serilaizeUsers();
 	    return true;
 	 }
 	
@@ -93,13 +93,13 @@ public class Teacher extends Employee implements Cloneable, Serializable, Sendab
 		lesson.setDay(day);
 		if(!(begin > 7 && begin < 23)) return false;
 		lesson.setBegin(begin);
-		DataBase.serializeUsers();
-		DataBase.serializeCourses();
+		DataBase.serilaizeUsers();
+		DataBase.serilaizeCourses();
 		return true;
 	}
 	
 	public void sendRequest(Request request) throws IOException {
-		DataBase.requests.add(request); DataBase.serializeRequests();
+		DataBase.requests.add(request); DataBase.serilaizeRequests();
 	}
 
 	public void doResearch(Research research) throws IOException {

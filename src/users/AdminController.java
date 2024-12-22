@@ -86,7 +86,7 @@ public class AdminController
 			    if(u != null) {
 			    	String userType = u.getClass().getName().substring(6).toUpperCase();
 			    	admin.addUser(enums.TypeUser.valueOf(userType), u);
-			    	DataBase.serializeUsers();
+			    	DataBase.serilaizeUsers();
 			    }
 			    break;
 		    case "4":
@@ -98,7 +98,7 @@ public class AdminController
 		    		if(id.equals("back")) break;
 		    	}
 		    	if(isIdExits(id)) admin.removeUser(id);
-		    	DataBase.serializeUsers();
+		    	DataBase.serilaizeUsers();
 		    	break;
 		    case "5":
 		    	System.out.print("\nEnter id: ");
@@ -113,7 +113,7 @@ public class AdminController
 			    	String newPassword = br.readLine();
 			    	admin.updatePassword(id, newPassword);
 		    	}
-		    	DataBase.serializeUsers();
+		    	DataBase.serilaizeUsers();
 		        break;
 		    case "6":
 		    	System.out.print("\nEnter id: ");
@@ -124,7 +124,7 @@ public class AdminController
 		    		if(id.equals("back")) break;
 		    	}
 		    	if(isIdExits(id)) admin.blockUser(id);
-		    	DataBase.serializeUsers();
+		    	DataBase.serilaizeUsers();
 		    	break;
 		    case "7":
 		    	seeRequest();
@@ -139,7 +139,7 @@ public class AdminController
 		    case "9":
 		    	System.out.println();
 		    	Admin.getAdmin().setLogFiles(new Action(LocalDate.now(), admin, "logged out"));
-		    	DataBase.serializeUsers();
+		    	DataBase.serilaizeUsers();
 		    	return;
 			default:
 				System.out.println("\nWe don't have such an index. Please select again:");
@@ -191,7 +191,7 @@ public class AdminController
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: password change\n2. New password: " + req.getRequestMess());
 			    			System.out.print("\nEnter 'change' to change password: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); return;}
 			    			if(answer.toLowerCase().equals("change")) {
 			    				if(Admin.getAdmin().seeRequest(req.getFrom(), req.getRequestType(), req.getRequestMess())) {
 			    					System.out.println("\nRequest successfully processed !");
@@ -203,7 +203,7 @@ public class AdminController
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: block user\n2. User ID: " + req.getRequestMess());
 			    			System.out.print("\nEnter 'block' to block user: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); return;}
 			    			if(answer.toLowerCase().equals("block")) {
 			    				if(Admin.getAdmin().seeRequest(req.getFrom(), req.getRequestType(), req.getRequestMess())) {
 			    					System.out.println("\nRequest successfully processed !");
@@ -215,7 +215,7 @@ public class AdminController
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: unlock user\n2. User ID: " + req.getRequestMess());
 			    			System.out.print("\nEnter 'unlock' to unlock user: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); return;}
 			    			if(answer.toLowerCase().equals("unlock")) {
 			    				if(Admin.getAdmin().seeRequest(req.getFrom(), req.getRequestType(), req.getRequestMess())) {
 			    					System.out.println("\nRequest successfully processed !");
@@ -227,7 +227,7 @@ public class AdminController
 				    		System.out.println("\nFrom user with ID: " + req.getFrom().getId() + "\n\nRequest details:\n1. Type: remove user\n2. User ID: " + req.getRequestMess());
 				    		System.out.print("\nEnter 'remove' to remove user: ");
 			    			answer = br.readLine();
-			    			if(answer.toLowerCase().equals("back")) {DataBase.serializeRequests(); return;}
+			    			if(answer.toLowerCase().equals("back")) {DataBase.serilaizeRequests(); return;}
 			    			if(answer.toLowerCase().equals("remove")) {
 			    				if(Admin.getAdmin().seeRequest(req.getFrom(), req.getRequestType(), req.getRequestMess())) {
 			    					System.out.println("\nRequest successfully processed !");
@@ -243,7 +243,7 @@ public class AdminController
 			    	}
 	        		
 		    		if(requestsNumb == 0) System.out.println("\nYou have answered all the sent requests.");
-		        	DataBase.serializeRequests();
+		        	DataBase.serilaizeRequests();
 	    		}
     		}
 		}

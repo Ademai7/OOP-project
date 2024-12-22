@@ -118,10 +118,10 @@ public class LibrarianController
 			case "12":
 				System.out.println();
 				Admin.getAdmin().setLogFiles(new Action(LocalDate.now(), librarian, "logged out"));
-				Admin.serializeLogFiles();
-				DataBase.serializeUsers();
-				Librarian.serializeAvailableBooks();
-				Librarian.serializeGivenBooks();
+				Admin.serilaizeLogFiles();
+				DataBase.serilaizeUsers();
+				Librarian.serilaizeAvailableBooks();
+				Librarian.serilaizeGivenBooks();
 				return;
 			default:
 				System.out.println("\nWe don't have such an index. Please select again:");
@@ -137,7 +137,8 @@ public class LibrarianController
     	System.out.println("\nEnter last name:   ");
     	String lastName = br.readLine();
     	System.out.println("\nEnter age:   ");
-    	Librarian l = new Librarian(password, firstName, lastName);
+    	int age = Integer.parseInt(br.readLine());
+    	Librarian l = new Librarian(password, firstName, lastName, age);
     	System.out.print("Id of new librarian is:  " + l.getId() + "\n");
     	return l;
     }
